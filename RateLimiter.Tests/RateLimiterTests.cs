@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Xunit;
 
 namespace Guava.RateLimiter.Tests
 {
@@ -19,7 +20,6 @@ namespace Guava.RateLimiter.Tests
     /// See the License for the specific language governing permissions and
     /// limitations under the License.
     /// </summary>
-    [TestFixture]
     public class RateLimiterTests
     {
         private static readonly double Epsilon = 1e-8;
@@ -29,7 +29,7 @@ namespace Guava.RateLimiter.Tests
             Assert.AreEqual(string.Join(", ", events), stopwatch.ReadEventsAndClear());
         }
 
-        [Test]
+        [Fact]
         public void TestSimple()
         {
             var stopwatch = new FakeStopwatch();
@@ -40,7 +40,7 @@ namespace Guava.RateLimiter.Tests
             AssertEvents(stopwatch, "R0.00", "R0.20", "R0.20");
         }
 
-        [Test]
+        [Fact]
         public void TestImmediateTryAcquire()
         {
             var r = RateLimiter.Create(1);
@@ -48,7 +48,7 @@ namespace Guava.RateLimiter.Tests
             Assert.IsFalse(r.TryAcquire(), "Capable of acquiring secondary permit");
         }
 
-        [Test]
+        [Fact]
         public void TestDoubleMinValueCanAcquireExactlyOnce()
         {
             var stopwatch = new FakeStopwatch();
@@ -60,7 +60,7 @@ namespace Guava.RateLimiter.Tests
             stopwatch.ReadEventsAndClear();
         }
 
-        [Test]
+        [Fact]
         public void TestSimpleRateUpdate()
         {
             var limiter = RateLimiter.Create(5.0, 5);
@@ -72,7 +72,7 @@ namespace Guava.RateLimiter.Tests
             Assert.Catch<ArgumentOutOfRangeException>(() => limiter.SetRate(-10.0));
         }
 
-        [Test]
+        [Fact]
         public void TestAcquireParameterValidation()
         {
             var limiter = RateLimiter.Create(999);
@@ -85,7 +85,7 @@ namespace Guava.RateLimiter.Tests
             Assert.Catch<ArgumentOutOfRangeException>(() => limiter.TryAcquire(-1, 1, TimeUnit.Seconds));
         }
 
-        [Test]
+        [Fact]
         public void TestSimpleWithWait()
         {
             var stopwatch = new FakeStopwatch();
@@ -97,7 +97,7 @@ namespace Guava.RateLimiter.Tests
             AssertEvents(stopwatch, "R0.00", "U0.20", "R0.00", "R0.20");
         }
 
-        [Test]
+        [Fact]
         public void TestSimpleAcquireReturnValues()
         {
             var stopwatch = new FakeStopwatch();
@@ -109,7 +109,7 @@ namespace Guava.RateLimiter.Tests
             AssertEvents(stopwatch, "R0.00", "U0.20", "R0.00", "R0.20");
         }
 
-        [Test]
+        [Fact]
         public void TestSimpleAcquireEarliestAvailableIsInPast()
         {
             var stopwatch = new FakeStopwatch();
@@ -140,7 +140,7 @@ namespace Guava.RateLimiter.Tests
                 "R0.20");
         }
 
-        [Test]
+        [Fact]
         public void TestCreateWarmupParameterValidation()
         {
             RateLimiter unused;
@@ -151,7 +151,7 @@ namespace Guava.RateLimiter.Tests
             Assert.Catch<ArgumentOutOfRangeException>(() => RateLimiter.Create(1.0, -1, TimeUnit.Nanoseconds));
         }
 
-        [Test]
+        [Fact]
         public void TestWarmUp()
         {
             var stopwatch = new FakeStopwatch();
@@ -181,7 +181,7 @@ namespace Guava.RateLimiter.Tests
                 "R0.00, R0.50, R0.50, R0.50, R0.50, R0.50, R0.50, R0.50"); // #7
         }
 
-        [Test]
+        [Fact]
         public void TestWarmUpWithColdFactor()
         {
             var stopwatch = new FakeStopwatch();
@@ -212,7 +212,7 @@ namespace Guava.RateLimiter.Tests
                 "R0.00, R0.20, R0.20, R0.20, R0.20, R0.20, R0.20, R0.20"); // #7
         }
 
-        [Test]
+        [Fact]
         public void TestWarmUpWithColdFactor1()
         {
             var stopwatch = new FakeStopwatch();
@@ -231,7 +231,7 @@ namespace Guava.RateLimiter.Tests
                 "R0.00, R0.20, R0.20, R0.20, R0.20, R0.20, R0.20, R0.20"); // #3
         }
 
-        [Test]
+        [Fact]
         public void TestWarmUpAndUpdate()
         {
             var stopwatch = new FakeStopwatch();
@@ -270,7 +270,7 @@ namespace Guava.RateLimiter.Tests
                 "R0.34, R0.28, R0.25, R0.25"); // #7 (cont.), note, this matches #5
         }
 
-        [Test]
+        [Fact]
         public void TestWarmUpAndUpdateWithColdFactor()
         {
             var stopwatch = new FakeStopwatch();
@@ -309,7 +309,7 @@ namespace Guava.RateLimiter.Tests
                 "R0.20, R0.10, R0.10, R0.10"); // #7 (cont.), note, this matches #5
         }
 
-        [Test]
+        [Fact]
         public void TestBurstyAndUpdate()
         {
             var stopwatch = new FakeStopwatch();
@@ -326,7 +326,7 @@ namespace Guava.RateLimiter.Tests
             AssertEvents(stopwatch, "R0.00", "R1.00", "R1.00", "R0.50", "R1.00", "R2.00");
         }
 
-        [Test]
+        [Fact]
         public void TestTryAcquire_noWaitAllowed()
         {
             var stopwatch = new FakeStopwatch();
@@ -338,7 +338,7 @@ namespace Guava.RateLimiter.Tests
             Assert.IsFalse(limiter.TryAcquire(timeout: 0, unit: TimeUnit.Seconds));
         }
 
-        [Test]
+        [Fact]
         public void TestTryAcquire_someWaitAllowed()
         {
             var stopwatch = new FakeStopwatch();
@@ -350,7 +350,7 @@ namespace Guava.RateLimiter.Tests
             Assert.IsTrue(limiter.TryAcquire(timeout: 100, unit: TimeUnit.Milliseconds));
         }
 
-        [Test]
+        [Fact]
         public void TestTryAcquire_overflow()
         {
             var stopwatch = new FakeStopwatch();
@@ -360,7 +360,7 @@ namespace Guava.RateLimiter.Tests
             Assert.IsTrue(limiter.TryAcquire(timeout: long.MaxValue, unit: TimeUnit.Microseconds));
         }
 
-        [Test]
+        [Fact]
         public void TestTryAcquire_negative()
         {
             var stopwatch = new FakeStopwatch();
@@ -372,7 +372,7 @@ namespace Guava.RateLimiter.Tests
             Assert.IsTrue(limiter.TryAcquire(1, -1, TimeUnit.Seconds));
         }
 
-        [Test]
+        [Fact]
         public void TestSimpleWeights()
         {
             var stopwatch = new FakeStopwatch();
@@ -386,7 +386,7 @@ namespace Guava.RateLimiter.Tests
             AssertEvents(stopwatch, "R0.00", "R1.00", "R1.00", "R2.00", "R4.00", "R8.00");
         }
 
-        [Test]
+        [Fact]
         public void TestInfinity_Bursty()
         {
             var stopwatch = new FakeStopwatch();
@@ -418,7 +418,7 @@ namespace Guava.RateLimiter.Tests
         /// <summary>
         /// <see ref="https://code.google.com/p/guava-libraries/issues/detail?id=1791"/>
         /// </summary>
-        [Test]
+        [Fact]
         public void TestInfinity_BustyTimeElapsed()
         {
             var stopwatch = new FakeStopwatch();
@@ -436,7 +436,7 @@ namespace Guava.RateLimiter.Tests
                 "R0.50");
         }
 
-        [Test]
+        [Fact]
         public void TestInfinity_WarmUp()
         {
             var stopwatch = new FakeStopwatch();
@@ -459,7 +459,7 @@ namespace Guava.RateLimiter.Tests
             AssertEvents(stopwatch, "R1.00", "R0.00", "R0.00");
         }
 
-        [Test]
+        [Fact]
         public void TestInfinity_WarmUpTimeElapsed()
         {
             var stopwatch = new FakeStopwatch();
@@ -477,7 +477,7 @@ namespace Guava.RateLimiter.Tests
         /// Make sure that bursts can never go above 1-second-worth-of-work for the current
         /// rate, even when we change the rate.
         /// </summary>
-        [Test]
+        [Fact]
         public void TestWeNeverGetABurstMoreThanOneSec()
         {
             var stopwatch = new FakeStopwatch();
@@ -504,7 +504,7 @@ namespace Guava.RateLimiter.Tests
         /// calling [Acquire(5), Acquire(1)] takes exactly the same time as
         /// [Acquire(2), Acquire(3), Acquire(1)].
         /// </summary>
-        [Test]
+        [Fact]
         public void TestTimeToWarmUpIsHonouredEvenWithWeights()
         {
             var stopwatch = new FakeStopwatch();
@@ -528,7 +528,7 @@ namespace Guava.RateLimiter.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void TestVerySmallDoubleValues() //throws
         {
             var stopwatch = new FakeStopwatch();
