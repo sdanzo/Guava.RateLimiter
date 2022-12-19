@@ -20,6 +20,7 @@ namespace Guava.RateLimiter.Tests
     /// See the License for the specific language governing permissions and
     /// limitations under the License.
     /// </summary>
+    
     public class RateLimiterTests
     {
         private static readonly double Epsilon = 1e-8;
@@ -172,7 +173,8 @@ namespace Guava.RateLimiter.Tests
             {
                 limiter.Acquire(); // #7
             }
-            AssertEvents(stopwatch, "R0.00, R1.38, R1.13, R0.88, R0.63, R0.50, R0.50, R0.50", // #1
+            AssertEvents(stopwatch, 
+                "R0.00, R1.38, R1.13, R0.88, R0.63, R0.50, R0.50, R0.50", // #1
                 "U0.50", // #2
                 "U4.00", // #3
                 "R0.00, R1.38, R1.13, R0.88, R0.63, R0.50, R0.50, R0.50", // #4
